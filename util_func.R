@@ -88,7 +88,7 @@ Run_until_upgrade <- function(curr_lvl, strategy, prob_table){
 Run_simulation_cost <- function(num_sim, curr_lvl, strategy, prob_table){
   ans <- lapply(1:num_sim, function(x) {
     
-    rr <- Run_until_upgrade(curr_lvl, strategy, prob_table)
+    Run_until_upgrade(curr_lvl, strategy, prob_table)
     
   })
   # get the columns that we need
@@ -99,5 +99,62 @@ Run_simulation_cost <- function(num_sim, curr_lvl, strategy, prob_table){
                     total_cost = temp$total_cost))
   
 }  
+
+# helper function for run until budget exhaust case
+Run_until_budget <- function(budget, curr_lvl, strategy, prob_table) {
+  # extrat the prob table with the specified curr lvl and strategy
+  prob <- prob_table[(prob_table$strategy == strategy) & (prob_table$curr_lvl == curr_lvl), ]
+  
+  # initialize index
+  iteration <- 0
+  total_cost <- 0
+  history <- c()
+  sim_lvl <- curr_lvl
+  can_roll <- (budget - total_cost) >= prob$refine_cost
+  
+  # use while loop to keep running until we hit the next level OR we run out of $$
+  while(sim_lvl < prob$next_lvl & can_roll){
+    
+    # refine once and get result
+    temp_result <- Refine_once(sim_lvl, strategy, prob_table)
+    
+    # after refinement, update the parameter
+    sim_lvl <- temp_result$output_lvl
+    total_cost <- total_cost + temp_result$output_cost
+    # I keep history of refine to QA
+    history <- c(history, temp_result$refine_result)
+    iteration <- iteration + 1
+    
+    # check if we still have enough money to refine another time
+    can_roll <- (budget - total_cost) >= prob$refine_cost
+  }
+  
+  # output
+  return(data.frame(budget = budget,
+                    iteration = iteration,
+                    total_cost = total_cost,
+                    final_lvl = ifelse(iteration == 0, curr_lvl, temp_result$output_lvl),
+                    refine_history = paste(history, collapse = ", ")))
+  
+}
+
+
+# helper function to run simulation
+Run_simulation_budget <- function(num_sim, budget, curr_lvl, strategy, prob_table){
+  ans <- lapply(1:num_sim, function(x) {
+    
+    Run_until_budget(budget, curr_lvl, strategy, prob_table)
+    
+  })
+  # get the columns that we need
+  temp <- do.call(rbind, ans)
+  
+  return(data.frame(strategy = strategy, 
+                    final_lvl = temp$final_lvl,
+                    total_iteration = temp$iteration,
+                    total_cost = temp$total_cost))
+  
+}
+
 
 

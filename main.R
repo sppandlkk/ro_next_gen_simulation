@@ -23,7 +23,7 @@ head(prob_table)
 
 # run simulation cost. Refine 5 -> 6
 set.seed(1234)
-nn <- 10000
+nn <- 1000
 r6_no_protect = Run_simulation_cost(nn, 5, "no_protect", prob_table)
 r6_protect = Run_simulation_cost(nn, 5, "protect", prob_table)
 
@@ -37,4 +37,23 @@ ggplot(r6_combined, aes(x = total_cost)) +
                                   fill = strategy),
                  position = "dodge") 
 
-# change fill and outline color manually 
+
+
+############
+##### simulation 2
+# r4 protect 780840, no protect 360096
+set.seed(3333)
+nn <- 1000
+r4_protect = Run_simulation_budget(nn, 780840, 4, "protect", prob_table)
+r4_no_protect = Run_simulation_budget(nn, 780840, 4, "no_protect", prob_table)
+r4_combined = rbind(r4_no_protect, r4_protect)
+table(r4_protect$final_lvl)
+table(r4_no_protect$final_lvl)
+# get histogram
+ggplot(r4_combined, aes(x = final_lvl)) +
+  geom_histogram(alpha = 0.4, aes(color = strategy,
+                                  fill = strategy),
+                 position = "dodge") 
+
+
+#### simulation 3: risk management
