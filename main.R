@@ -69,10 +69,21 @@ sim_result = lapply(c(1e6 + (0:10)*2*1e5), function(x) {
 gg <- do.call(rbind, sim_result)
 gg
 ggplot(gg, aes(fail_rate, budget_in_m)) +
-  geom_point() + geom_smooth(method = "loess") + 
-  xlab("downgrade_rate") + ylab("Budget ($MM)") +
+  geom_smooth(method = "loess") + 
+  xlab("downgrade_rate") + 
+  ylab("Budget ($MM)") +
   scale_x_binned(breaks = c(0.025, 0.05, 0.075, 0.1, 0.125, 0.15))
   
 
 
+#
+summary(r6_no_protect$total_iteration)
+mean(r6_no_protect$total_iteration <= 4)
+mean(r6_no_protect$total_iteration > 4 & r6_no_protect$total_iteration <= 10 )
+mean(r6_no_protect$total_iteration >= 10)
 
+
+rr = Run_simulation_cost(nn, 7, "no_protect", prob_table)
+summary(rr$total_iteration)
+mean(rr$total_iteration >= 30)
+mean(rr$total_iteration >= 100)
