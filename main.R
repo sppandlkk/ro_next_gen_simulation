@@ -44,8 +44,8 @@ ggplot(r6_combined, aes(x = total_cost)) +
 # r4 protect 780840, no protect 360096
 set.seed(3333)
 nn <- 1000
-r4_protect = Run_simulation_budget(nn, 780840, 4, "protect", prob_table)
-r4_no_protect = Run_simulation_budget(nn, 780840, 4, "no_protect", prob_table)
+r4_protect = Run_simulation_budget(nn, 1265538, 5, "protect", prob_table)
+r4_no_protect = Run_simulation_budget(nn, 1265538, 5, "no_protect", prob_table)
 r4_combined = rbind(r4_no_protect, r4_protect)
 table(r4_protect$final_lvl)
 table(r4_no_protect$final_lvl)
@@ -57,3 +57,22 @@ ggplot(r4_combined, aes(x = final_lvl)) +
 
 
 #### simulation 3: risk management
+#### simulate given the budget, what's failure rate at given lvl
+set.seed(6666)
+sim_result = lapply(c(1e6 + (0:10)*2*1e5), function(x) {
+  set_lvl <- 5
+  temp <- Run_simulation_budget(3000, x, set_lvl, "no_protect", prob_table)
+  data.frame(budget = x, budget_in_m = x/1e6, fail_rate = mean(temp$final_lvl < set_lvl))
+})
+
+# options(scipen=999)
+gg <- do.call(rbind, sim_result)
+gg
+ggplot(gg, aes(fail_rate, budget_in_m)) +
+  geom_point() + geom_smooth(method = "loess") + 
+  xlab("downgrade_rate") + ylab("Budget ($MM)") +
+  scale_x_binned(breaks = c(0.025, 0.05, 0.075, 0.1, 0.125, 0.15))
+  
+
+
+
