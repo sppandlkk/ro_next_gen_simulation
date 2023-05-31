@@ -1,2 +1,3 @@
-# ro_next_gen_simulation
-RO next generation - simulation
+# RO 仙境傳說：新世代的誕生 - 精煉功率模擬器
+利用官方提供的數據來模擬精煉成功率
+隨便寫寫
