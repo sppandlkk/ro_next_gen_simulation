@@ -7,18 +7,24 @@ source("./util_func.R")
 # First enter the crystal price 
 refine_lvl_1_4_cost <- 18360
 refine_lvl_5_8_cost <- 54960
+refine_lvl_9_12_cost <- 139200
 protect_lvl_1_4_cost <- 0
 protect_lvl_5_8_cost <- 67800
+protect_lvl_9_12_cost <- 261600
 blessed_lvl_1_4_cost <- 0 
 blessed_lvl_5_8_cost <- 167040
+blessed_lvl_9_12_cost <- 314400
 
 # Generate prob/cost table
 prob_table <- Generate_prob_table(refine_lvl_1_4_cost,
                                   refine_lvl_5_8_cost,
+                                  refine_lvl_9_12_cost,
                                   protect_lvl_1_4_cost,
                                   protect_lvl_5_8_cost,
+                                  protect_lvl_9_12_cost,
                                   blessed_lvl_1_4_cost,
-                                  blessed_lvl_5_8_cost)
+                                  blessed_lvl_5_8_cost,
+                                  blessed_lvl_9_12_cost)
 head(prob_table)
 
 # run simulation cost. Refine 5 -> 6
@@ -87,3 +93,19 @@ rr = Run_simulation_cost(nn, 7, "no_protect", prob_table)
 summary(rr$total_iteration)
 mean(rr$total_iteration >= 30)
 mean(rr$total_iteration >= 100)
+
+
+####
+sim_8_9 <- Run_simulation_budget(nn, 1e7, 8, "no_protect", prob_table)
+table(sim_8_9$final_lvl)
+
+Run_until_budget(1e7, 8, "no_protect", prob_table)
+  
+# test expectation
+rr = Run_simulation_cost(nn, 8, "no_protect", prob_table)
+summary(rr$total_cost)
+
+###
+tt <- Run_simulation_cost(nn, 8, "no_protect", prob_table)
+summary(tt$total_iteration)
+quantile(tt$total_iteration, 0.9)

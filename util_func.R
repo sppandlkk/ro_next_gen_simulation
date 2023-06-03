@@ -1,31 +1,34 @@
 ### helper function that generate the prob table and calculate costs from input
 Generate_prob_table <- function(refine_lvl_1_4_cost,
                                 refine_lvl_5_8_cost,
+                                refine_lvl_9_12_cost,
                                 protect_lvl_1_4_cost = 0,
                                 protect_lvl_5_8_cost,
+                                protect_lvl_9_12,
                                 blessed_lvl_1_4_cost = 0,
-                                blessed_lvl_5_8_cost){
+                                blessed_lvl_5_8_cost,
+                                blessed_lvl_9_12){
   
   # generate the probably table with corresponding costs for no protection case
   no_protect <- data.frame(strategy = "no_protect",
-                           curr_lvl = 0:7,
-                           next_lvl = 1:8,
-                           p_up = c(1, 1/2, 1/3, 1/4, 1/4, 1/4, 1/5, 1/5),
-                           p_fail = c(0, 1/2, 2/3, 3/4, 0.4, 0.4, 0.4, 0.4),
-                           p_down = c(0, 0, 0, 0, 1/4, 1/4, 1/4, 1/4),
-                           p_damage = c(0, 0, 0, 0, 0.1, 0.1, 0.15, 0.15),
-                           refine_cost = c(rep(refine_lvl_1_4_cost, 4), rep(refine_lvl_5_8_cost, 4)),
-                           blessed_cost = c(rep(blessed_lvl_1_4_cost, 4), rep(blessed_lvl_5_8_cost, 4)))
+                           curr_lvl = 0:11,
+                           next_lvl = 1:12,
+                           p_up = c(1, 1/2, 1/3, 1/4, 1/4, 1/4, 1/5, 1/5, 1/5, 1/5, 1/5, 1/5),
+                           p_fail = c(0, 1/2, 2/3, 3/4, 0.4, 0.4, 0.4, 0.4, 0.35, 0.35, 0.3, 0.3),
+                           p_down = c(0, 0, 0, 0, 1/4, 1/4, 1/4, 1/4, 0.3, 0.3, 0.3, 0.3),
+                           p_damage = c(0, 0, 0, 0, 0.1, 0.1, 0.15, 0.15, 0.15, 0.15, 0.2, 0.2),
+                           refine_cost = c(rep(refine_lvl_1_4_cost, 4), rep(refine_lvl_5_8_cost, 4), rep(refine_lvl_9_12_cost, 4)),
+                           blessed_cost = c(rep(blessed_lvl_1_4_cost, 4), rep(blessed_lvl_5_8_cost, 4), rep(blessed_lvl_9_12_cost, 4)))
   # same for protection case
   protect <- data.frame(strategy = "protect",
-                        curr_lvl = 0:7,
-                        next_lvl = 1:8,
-                        p_up = c(1, 1/2, 1/3, 1/4, 1/5, 1/7.5, 1/10, 1/15),
-                        p_fail = c(0, 1/2, 2/3, 3/4, 0.6, 0.6166666, 0.6, 0.5833333),
+                        curr_lvl = 0:11,
+                        next_lvl = 1:12,
+                        p_up = c(1, 1/2, 1/3, 1/4, 1/5, 1/7.5, 1/10, 1/15, 0.05, 1/30, 0.025, 0.02),
+                        p_fail = c(0, 1/2, 2/3, 3/4, 0.6, 0.6166666, 0.6, 0.5833333, 0.55, 0.516666, 0.475, 0.43),
                         p_down = 0,
-                        p_damage = c(0, 0, 0, 0, 0.2, 0.25, 0.3, 0.35),
-                        refine_cost = c(rep(refine_lvl_1_4_cost + protect_lvl_1_4_cost, 4), rep(refine_lvl_5_8_cost + protect_lvl_5_8_cost, 4)),
-                        blessed_cost = c(rep(blessed_lvl_1_4_cost, 4), rep(blessed_lvl_5_8_cost, 4)))
+                        p_damage = c(0, 0, 0, 0, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55),
+                        refine_cost = c(rep(refine_lvl_1_4_cost + protect_lvl_1_4_cost, 4), rep(refine_lvl_5_8_cost + protect_lvl_5_8_cost, 4), rep(refine_lvl_9_12_cost + protect_lvl_9_12_cost, 4)),
+                        blessed_cost = c(rep(blessed_lvl_1_4_cost, 4), rep(blessed_lvl_5_8_cost, 4), rep(blessed_lvl_9_12_cost, 4)))
   
   rbind(no_protect, protect)
   
